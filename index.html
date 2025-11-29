@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Опросник</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 450px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 12px;
+            background: #007bff;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Шаг 1 -->
+    <div id="step1">
+        <h2>Жынысыңыз</h2>
+        <button onclick="selectGender('Ер')">Ер</button>
+        <button onclick="selectGender('Әйел')">Әйел</button>
+    </div>
+
+    <!-- Шаг 2 -->
+    <div id="step2" class="hidden">
+        <h2>Жасыңыз</h2>
+        <button onclick="selectAge('18-24')">18-24</button>
+        <button onclick="selectAge('24-34')">24-34</button>
+        <button onclick="selectAge('34-44')">34-44</button>
+        <button onclick="selectAge('44-54')">44-54</button>
+        <button onclick="selectAge('55+')">55+</button>
+    </div>
+
+    <!-- Шаг 3 -->
+    <div id="step3" class="hidden">
+        <h2>Сіздің атыңыз</h2>
+        <input type="text" id="name" placeholder="Атыңызды енгізіңіз" />
+        <button onclick="goToPhone()">Келесі</button>
+    </div>
+
+    <!-- Шаг 4 -->
+    <div id="step4" class="hidden">
+        <h2>Номер телефона</h2>
+        <input type="tel" id="phone" placeholder="+7 777 000 00 00"/>
+        <button onclick="submitForm()">Аяқтау</button>
+    </div>
+
+    <!-- Финальный экран -->
+    <div id="finish" class="hidden">
+        <h2>Өтінішіңіз қабылданды! 🎉</h2>
+        <p style="text-align:center;">Менеджер жақын арада сізге хабарласады.</p>
+    </div>
+
+</div>
+
+<script>
+    let userData = {
+        gender: "",
+        age: "",
+        name: "",
+        phone: ""
+    };
+
+    function selectGender(g) {
+        userData.gender = g;
+        document.getElementById("step1").classList.add("hidden");
+        document.getElementById("step2").classList.remove("hidden");
+    }
+
+    function selectAge(a) {
+        userData.age = a;
+        document.getElementById("step2").classList.add("hidden");
+        document.getElementById("step3").classList.remove("hidden");
+    }
+
+    function goToPhone() {
+        const name = document.getElementById("name").value.trim();
+        if (!name) {
+            alert("Атыңызды енгізіңіз");
+            return;
+        }
+        userData.name = name;
+
+        document.getElementById("step3").classList.add("hidden");
+        document.getElementById("step4").classList.remove("hidden");
+    }
+
+    async function submitForm() {
+        const phone = document.getElementById("phone").value.trim();
+
+        if (!phone) {
+            alert("Телефон нөмірін енгізіңіз");
+            return;
+        }
+
+        userData.phone = phone;
+
+        // ⚠️ ВСТАВЬ СВОЙ URL!
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxcq3WIto39uaYOzSVrHXEvtWCfdgGxtcyAwUdq-bM-DBhg9aOXS67JFPDXhXHKcpx4g/exec";
+
+        try {
+            await fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(userData)
+            });
+
+            document.getElementById("step4").classList.add("hidden");
+            document.getElementById("finish").classList.remove("hidden");
+
+        } catch (error) {
+            console.error(error);
+            alert("Қате пайда болды");
+        }
+    }
+</script>
+
+</body>
+</html>
